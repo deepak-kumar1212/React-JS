@@ -1,7 +1,46 @@
-export default function FormatName(user) {
-    return user.firstName + ' ' + user.lastName;
+import {ThemeContext, themes} from './theme-context';
+import ThemedButton from './themed-button';
+import React from 'react';
+
+// An intermediate component that uses the ThemedButton
+function Toolbar(props) {
+  return (
+    <ThemedButton onClick={props.changeTheme}>
+      Change Theme
+    </ThemedButton>
+  );
+}
+
+export default class App extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      theme: themes.light,
+    };
+
+    this.toggleTheme = () => {
+      this.setState(state => ({
+        theme:
+          state.theme === themes.dark
+            ? themes.light
+            : themes.dark,
+      }));
+    };
   }
-  export const user = {
-    firstName: 'Harper',
-    lastName: 'Perez'
-  };
+
+  render() {
+    // The ThemedButton button inside the ThemeProvider
+    // uses the theme from state while the one outside uses
+    // the default dark theme
+    return(
+        <div>
+        <ThemeContext.Provider value={this.state.theme}>
+          <Toolbar changeTheme={this.toggleTheme} />
+        </ThemeContext.Provider>
+        <section>
+          <ThemedButton />
+        </section>
+        </div>
+    );
+  }
+}
